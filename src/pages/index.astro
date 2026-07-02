@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const posts = (await getCollection('posts', (p) => p.data.status === 'published')).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf(),
+);
+---
+
+<Base title="ARIA" description="A thought, with its receipts attached.">
+  {posts.length === 0 && <p class="empty">No posts published yet.</p>}
+  <ul class="index">
+    {posts.map((post) => (
+      <li>
+        <a href={`/posts/${post.id}`}>{post.data.title}</a>
+        {post.data.subtitle && <span class="sub">{post.data.subtitle}</span>}
+        <time datetime={post.data.published.toISOString()}>
+          {post.data.published.toISOString().slice(0, 10)}
+        </time>
+      </li>
+    ))}
+  </ul>
+</Base>
+
+<style>
+  .empty { color: var(--muted); }
+  .index { list-style: none; margin: 0; padding: 0; }
+  .index li { padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
+  .index a { font-size: 1.3rem; font-weight: 700; text-decoration: none; display: block; }
+  .index .sub { display: block; color: var(--muted); margin: 0.2rem 0 0.4rem; }
+  .index time { color: var(--muted); font-size: 0.85rem; font-family: var(--mono); }
+</style>

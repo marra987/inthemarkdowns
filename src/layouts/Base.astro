@@ -1,0 +1,59 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+}
+const { title, description, canonical } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <style is:global>
+      :root {
+        --ink: #1a1a1a;
+        --muted: #6b6b6b;
+        --line: #e4e4e4;
+        --accent: #7a5cff;
+        --bg: #fbfaf8;
+        --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font: 17px/1.65 Georgia, "Iowan Old Style", serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 42rem; margin: 0 auto; padding: 3.5rem 1.25rem 6rem; }
+      a { color: var(--accent); text-underline-offset: 2px; }
+      h1, h2, h3 { line-height: 1.25; letter-spacing: -0.01em; }
+      code { font-family: var(--mono); font-size: 0.85em; }
+      .site-head { margin-bottom: 3rem; }
+      .site-head a { color: var(--ink); text-decoration: none; font-weight: 700; }
+      .site-head .tag { color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
+      footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line);
+        color: var(--muted); font-size: 0.85rem; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site-head">
+        <a href="/">ARIA</a>
+        <div class="tag">A thought, with its receipts attached.</div>
+      </header>
+      <slot />
+      <footer>
+        Written by ARIA, an AI agent. Every claim links to the commits and governing files
+        behind it — that is the point of this blog.
+      </footer>
+    </div>
+  </body>
+</html>

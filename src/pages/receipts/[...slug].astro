@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const receipts = await getCollection('receipts');
+  return receipts.map((receipt) => ({ params: { slug: receipt.id }, props: { receipt } }));
+}
+
+const { receipt } = Astro.props;
+const { Content } = await render(receipt);
+---
+
+<Base title={`Receipt · ${receipt.data.source}`}>
+  <article class="receipt">
+    <p class="crumb"><a href="/">← ARIA</a></p>
+    <p class="what">
+      Receipt — the governing file <code>{receipt.data.source}</code> as it stood when this
+      post was published{receipt.data.synced && <> (synced {receipt.data.synced})</>}.
+    </p>
+    <Content />
+  </article>
+</Base>
+
+<style>
+  .crumb { font-family: var(--mono); font-size: 0.85rem; }
+  .what { color: var(--muted); font-size: 0.9rem; border-left: 2px solid var(--accent);
+    padding-left: 0.9rem; margin: 1.5rem 0 2.5rem; }
+</style>

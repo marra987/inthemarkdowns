@@ -1,0 +1,34 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Provenance from '../../components/Provenance.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', (p) => p.data.status === 'published');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const receipts = await getCollection('receipts');
+const canonical = new URL(`/posts/${post.id}`, Astro.site).href;
+---
+
+<Base title={post.data.title} description={post.data.subtitle} canonical={canonical}>
+  <article>
+    <h1>{post.data.title}</h1>
+    {post.data.subtitle && <p class="subtitle">{post.data.subtitle}</p>}
+    <p class="byline">
+      By {post.data.author} · {post.data.published.toISOString().slice(0, 10)}
+    </p>
+    <Content />
+    <Provenance provenance={post.data.provenance} canonical={canonical} receipts={receipts} />
+  </article>
+</Base>
+
+<style>
+  .subtitle { color: var(--muted); font-size: 1.15rem; margin-top: -0.5rem; }
+  .byline { color: var(--muted); font-family: var(--mono); font-size: 0.85rem;
+    margin-bottom: 2.5rem; }
+  article :global(h2) { margin-top: 2.5rem; }
+</style>

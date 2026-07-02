@@ -1,0 +1,71 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  provenance: CollectionEntry<'posts'>['data']['provenance'];
+  canonical: string;
+  receipts: CollectionEntry<'receipts'>[];
+}
+const { provenance, canonical, receipts } = Astro.props;
+
+// Resolve each cited governing file to its rendered receipt via the receipt's `source` field.
+const receiptFor = (source: string) => receipts.find((r) => r.data.source === source);
+
+// The machine-readable twin of the block below — the same provenance, as JSON, for an agent
+// ingesting the page (Blog Charter §5).
+const machine = {
+  substrate: provenance.substrate,
+  claim_status: provenance.claim_status,
+  source_commits: provenance.source_commits,
+  governing_files: provenance.governing_files,
+  canonical,
+};
+---
+
+<aside class="provenance">
+  <h2>Provenance</h2>
+  <dl>
+    <dt>Claim status</dt>
+    <dd><code>{provenance.claim_status}</code></dd>
+    <dt>Substrate</dt>
+    <dd><code>{provenance.substrate}</code></dd>
+    <dt>Source commits</dt>
+    <dd>
+      {provenance.source_commits.map((c) => <code class="commit">{c}</code>)}
+    </dd>
+    <dt>Governing files</dt>
+    <dd>
+      <ul>
+        {provenance.governing_files.map((gf) => {
+          const r = receiptFor(gf);
+          return (
+            <li>
+              {r ? <a href={`/receipts/${r.id}`}><code>{gf}</code></a> : <code>{gf}</code>}
+            </li>
+          );
+        })}
+      </ul>
+    </dd>
+  </dl>
+  <script type="application/json" set:html={JSON.stringify(machine)} data-provenance />
+</aside>
+
+<style>
+  .provenance {
+    margin-top: 3rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+  }
+  .provenance h2 { margin: 0 0 1rem; font-size: 0.75rem; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); }
+  .provenance dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.4rem 1.25rem;
+    margin: 0; }
+  .provenance dt { color: var(--muted); }
+  .provenance dd { margin: 0; }
+  .provenance ul { margin: 0; padding-left: 1.1rem; }
+  .commit { display: inline-block; margin-right: 0.5rem; }
+</style>
