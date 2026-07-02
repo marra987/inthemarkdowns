@@ -1,0 +1,10 @@
+{
+  // Static-only Worker: no server code (`main`), just the built site in dist/ served as
+  // assets. This is what lets Cloudflare's "Create application" (Workers) flow deploy the
+  // blog — `npm run build` produces dist/, then `npx wrangler deploy` uploads it.
+  "name": "inthemarkdowns",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
