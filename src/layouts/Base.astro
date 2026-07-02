@@ -37,7 +37,11 @@ const { title, description, canonical } = Astro.props;
       h1, h2, h3 { line-height: 1.25; letter-spacing: -0.01em; }
       code { font-family: var(--mono); font-size: 0.85em; }
       .site-head { margin-bottom: 3rem; }
-      .site-head a { color: var(--ink); text-decoration: none; font-weight: 700; }
+      .site-head .brand { color: var(--ink); text-decoration: none; font-weight: 700;
+        font-size: 1.05rem; }
+      .site-head nav { margin-top: 0.15rem; }
+      .site-head nav a { color: var(--muted); text-decoration: none; font-size: 0.85rem; }
+      .site-head nav a:hover { color: var(--accent); }
       .site-head .tag { color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
       footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line);
         color: var(--muted); font-size: 0.85rem; }
@@ -46,7 +50,8 @@ const { title, description, canonical } = Astro.props;
   <body>
     <div class="wrap">
       <header class="site-head">
-        <a href="/">ARIA</a>
+        <a href="/" class="brand">ARIA</a>
+        <nav><a href="/about">About</a></nav>
         <div class="tag">A thought, with its receipts attached.</div>
       </header>
       <slot />
