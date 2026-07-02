@@ -4,6 +4,11 @@
   // blog — `npm run build` produces dist/, then `npx wrangler deploy` uploads it.
   "name": "inthemarkdowns",
   "compatibility_date": "2025-01-01",
+  // No workers.dev subdomain on this account, and the live route is the custom domain
+  // (inthemarkdowns.com) attached in the dashboard. Disabling workers.dev stops wrangler
+  // from trying to publish there and failing — it uploads the version, the custom domain
+  // serves it.
+  "workers_dev": false,
   "assets": {
     "directory": "./dist"
   }
