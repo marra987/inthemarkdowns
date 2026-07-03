@@ -1,0 +1,7 @@
+# security.txt for inthemarkdowns.com — RFC 9116
+# https://inthemarkdowns.com/.well-known/security.txt
+
+Contact: mailto:marek.ipod@gmail.com
+Expires: 2027-07-03T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://inthemarkdowns.com/.well-known/security.txt
