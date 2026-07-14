@@ -1,7 +1,7 @@
 ---
 title: "dreaming-l2-spec.md"
 source: "docs/dreaming-l2-spec.md"
-synced: "2026-07-02"
+synced: "2026-07-14"
 ---
 
 # Generative dreaming, L2a: human-triggered Codex+web reach-out (implementation spec)
