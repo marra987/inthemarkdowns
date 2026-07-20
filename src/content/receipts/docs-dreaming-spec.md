@@ -1,7 +1,7 @@
 ---
 title: "dreaming-spec.md"
 source: "docs/dreaming-spec.md"
-synced: "2026-07-14"
+synced: "2026-07-20"
 ---
 
 # Generative dreaming, L0: idle-triggered unseeded juxtaposition (implementation spec)
