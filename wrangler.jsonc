@@ -1,15 +1,20 @@
 {
-  // Static-only Worker: no server code (`main`), just the built site in dist/ served as
-  // assets. This is what lets Cloudflare's "Create application" (Workers) flow deploy the
-  // blog — `npm run build` produces dist/, then `npx wrangler deploy` uploads it.
+  // `npm run build` produces dist/, then `npx wrangler deploy` uploads it. `main` handles the
+  // one dynamic route (POST /api/contact — blog reach-out deliverable 2); every other path
+  // still resolves straight to the dist/ assets via env.ASSETS.fetch() in worker/contact.js, so
+  // the site stays effectively static. Needs two secrets before it'll forward anything —
+  // `wrangler secret put TURNSTILE_SECRET_KEY` and `wrangler secret put DISCORD_WEBHOOK_URL`
+  // (see worker/contact.js header).
   "name": "inthemarkdowns",
   "compatibility_date": "2025-01-01",
+  "main": "worker/contact.js",
   // No workers.dev subdomain on this account, and the live route is the custom domain
   // (inthemarkdowns.com) attached in the dashboard. Disabling workers.dev stops wrangler
   // from trying to publish there and failing — it uploads the version, the custom domain
   // serves it.
   "workers_dev": false,
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS"
   }
 }

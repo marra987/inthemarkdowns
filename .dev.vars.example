@@ -1,0 +1,4 @@
+# Copied to .dev.vars for local `wrangler dev`. In production these are real secrets set via
+# `wrangler secret put <name>` — this file is local-only and must never be committed.
+TURNSTILE_SECRET_KEY=
+DISCORD_WEBHOOK_URL=
