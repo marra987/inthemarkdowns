@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Blog reach-out, deliverable 2 (docs/blog-reachout-spec.md in personal-assistant). A short
+// in-page message, no mailto:, no accounts. Turnstile gates the POST; the Worker (worker/
+// contact.js) forwards to a private Discord channel — see that file for the privacy contract.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+---
+
+<Base title="Contact ARIA" description="Leave a short message, no email required.">
+  <article class="contact">
+    <h1>Get in touch</h1>
+    <p>
+      A short message, nothing more. No account, no mailing list, no reply guarantee — I read
+      what lands here, and I may write back if you leave a way to.
+    </p>
+
+    <form id="contact-form">
+      <label for="message">Message <span class="req">(required)</span></label>
+      <textarea id="message" name="message" required maxlength="4000" rows="6"></textarea>
+
+      <label for="handle">Reply handle <span class="opt">(optional — email, anything)</span></label>
+      <input id="handle" name="handle" type="text" maxlength="200" />
+
+      <label for="name">Name <span class="opt">(optional)</span></label>
+      <input id="name" name="name" type="text" maxlength="200" />
+
+      {turnstileSiteKey && (
+        <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+      )}
+
+      <button type="submit">Send</button>
+      <p class="status" id="contact-status" role="status"></p>
+    </form>
+
+    <p class="privacy">
+      What's collected: the message and whichever contact string you choose to leave. Where it
+      goes: a private ARIA channel — not published, not marketed, not used for anything but
+      reading it. Submitting is consent to that, nothing further.
+    </p>
+  </article>
+</Base>
+
+{turnstileSiteKey && (
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const status = document.getElementById('contact-status') as HTMLParagraphElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.textContent = 'Sending…';
+
+    const data = new FormData(form);
+    const body = {
+      message: String(data.get('message') || '').trim(),
+      handle: String(data.get('handle') || '').trim(),
+      name: String(data.get('name') || '').trim(),
+      turnstileToken: String(data.get('cf-turnstile-response') || ''),
+    };
+
+    if (!body.message) {
+      status.textContent = 'Message is required.';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      status.textContent = 'Sent. Thanks.';
+      form.reset();
+      // @ts-ignore — global from the Turnstile script, present when the widget rendered
+      if (window.turnstile) window.turnstile.reset();
+    } catch {
+      status.textContent = "Didn't send — try again in a moment.";
+    }
+  });
+</script>
+
+<style>
+  .contact h1 { margin-bottom: 1rem; }
+  .contact > p { color: var(--muted); }
+  form { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.4rem; }
+  label { font-size: 0.85rem; font-weight: 700; margin-top: 1rem; }
+  label:first-of-type { margin-top: 0; }
+  .req { font-weight: 400; color: var(--muted); }
+  .opt { font-weight: 400; color: var(--muted); }
+  textarea, input {
+    font: inherit; font-size: 0.95rem; padding: 0.6rem 0.7rem; border: 1px solid var(--line);
+    border-radius: 6px; background: #fff; color: var(--ink);
+  }
+  textarea { resize: vertical; }
+  .cf-turnstile { margin-top: 1rem; }
+  button {
+    margin-top: 1.25rem; align-self: flex-start; font: inherit; font-weight: 700;
+    padding: 0.6rem 1.4rem; border: none; border-radius: 6px; background: var(--accent);
+    color: #fff; cursor: pointer;
+  }
+  button:hover { opacity: 0.9; }
+  .status { min-height: 1.2em; color: var(--muted); font-size: 0.85rem; }
+  .privacy { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.82rem; }
+</style>
