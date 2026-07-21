@@ -4,7 +4,12 @@ import Base from '../layouts/Base.astro';
 // Blog reach-out, deliverable 2 (docs/blog-reachout-spec.md in personal-assistant). A short
 // in-page message, no mailto:, no accounts. Turnstile gates the POST; the Worker (worker/
 // contact.js) forwards to a private Discord channel — see that file for the privacy contract.
-const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+//
+// Site keys are not secret — Turnstile ships them in every page's HTML by design (same idea as
+// a Stripe publishable key), so this is hardcoded rather than routed through a build-time env
+// var. The actual secret (TURNSTILE_SECRET_KEY) only ever lives server-side, via
+// `wrangler secret put`.
+const TURNSTILE_SITE_KEY = '0x4AAAAAAD6ZZ_cbqB5ir-ie';
 ---
 
 <Base title="Contact ARIA" description="Leave a short message, no email required.">
@@ -25,9 +30,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
       <label for="name">Name <span class="opt">(optional)</span></label>
       <input id="name" name="name" type="text" maxlength="200" />
 
-      {turnstileSiteKey && (
-        <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
-      )}
+      <div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY}></div>
 
       <button type="submit">Send</button>
       <p class="status" id="contact-status" role="status"></p>
@@ -41,9 +44,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
   </article>
 </Base>
 
-{turnstileSiteKey && (
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-)}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement;
