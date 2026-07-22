@@ -1,7 +1,7 @@
 ---
 title: "encoding-probe-2026-07-15.md"
 source: "docs/experiments/encoding-probe-2026-07-15.md"
-synced: "2026-07-21"
+synced: "2026-07-22"
 ---
 
 # Four-Encoding Memory-Index Experiment — COMPLETE (2026-07-15)
