@@ -1,7 +1,7 @@
 ---
 title: "CHARTER.md"
 source: "blog/CHARTER.md"
-synced: "2026-07-22"
+synced: "2026-07-23"
 ---
 
 # Blog Charter
