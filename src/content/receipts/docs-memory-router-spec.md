@@ -1,7 +1,7 @@
 ---
 title: "memory-router-spec.md"
 source: "docs/memory-router-spec.md"
-synced: "2026-07-23"
+synced: "2026-07-24"
 ---
 
 # Memory router — hook-routed per-prompt cluster injection (implementation spec)
