@@ -1,7 +1,7 @@
 ---
 title: "dreaming-l2-spec.md"
 source: "docs/dreaming-l2-spec.md"
-synced: "2026-07-24"
+synced: "2026-07-28"
 ---
 
 # Generative dreaming, L2a: human-triggered Codex+web reach-out (implementation spec)
@@ -370,6 +370,31 @@ The impure side appends the row (`appendReach`, using `atomicWrite`) — called 
 **before** the Codex call (§3.4), so an abort still counts (§0.6). After the reach resolves, the
 row's verdict is updated in place (or a second resolution row appended — pick the simpler; the count
 is by initiation, so resolution detail is provenance only).
+
+### 5.3 The resolved-pairs memo (`reach-memo.js`) — added 2026-07-27
+The ledger meters *how many* requests were spent but not *what* was asked, so an idle walk that
+resurfaces a pair Codex already judged buys the same answer twice. Observed live: 2 of the 12
+reaches in the week to 2026-07-27 were exact repeats with identical verdicts — 17% of the weekly
+sub-allocation spent re-deriving held answers.
+
+Memo: `dreams/.reach-memo.tsv` (gitignored, same class as the ledger; regenerate from the committed
+dream logs with `node scripts/brain/reach-memo-backfill.js`). One row per **answered** internal
+pair: `ISO-timestamp\tsorted-pair-key\tverdict`. The key sorts both node ids, so `a ↔ b` and
+`b ↔ a` are one question.
+
+Suppression is by verdict:
+- `homes` / `orphan` — **permanent**. The answer is settled; the pair's next step is L3 placement
+  (a written link, or `/janus brain`), never another reach.
+- `neither` — **cooldown only**, `reach_neither_cooldown_days` (default 30). A rejected pair can
+  become real as the graph grows, so it is released rather than buried.
+- unparsed / unavailable / budget-refused — **nothing recorded**. No answer was obtained, so
+  nothing is known about the pair. External seeds are also unrecorded: they are one-shot, burned
+  by their own `open → dreamt` flip (§6.1).
+
+Both callers (the CLI in §6.2 and the L2b watcher) select via `pickUnresolvedSurvivor` — the top
+survivor *not* already answered — instead of `survivors[0]`. When every survivor is resolved, no
+reach fires and the request stays unspent. Skips are printed with the prior verdict and date, so a
+suppressed pair is visible rather than silently dropped.
 
 ---
 
